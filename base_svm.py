@@ -16,7 +16,8 @@ class BaseSVM(object):
     """
 
     def __init__(self, svm, kernel, degree, gamma, coef0, cache_size,
-                 eps, C, nr_weight, nu, p, shrinking, probability):
+                 eps, C, nr_weight, nu, p, shrinking, probability,
+                 scale):
         self.svm = _svm_types.index(svm)
         self.kernel = _kernel_types.index(kernel)
         self.degree = degree
@@ -30,6 +31,7 @@ class BaseSVM(object):
         self.p = p
         self.shrinking = shrinking
         self.probability = probability
+        self.scale = scale
 
     def fit(self, X, y):
         """
@@ -37,6 +39,11 @@ class BaseSVM(object):
         """
         X = np.asanyarray(X, dtype=np.float, order='C')
         y = np.asanyarray(y, dtype=np.float, order='C')
+
+        if self.scale:
+            self.mean = X.mean(0)
+            self.std = X.std(0)
+            X = (X - self.mean) / self.std
 
         # check dimensions
         if X.shape[0] != y.shape[0]: raise ValueError("Incompatible shapes")
@@ -51,6 +58,7 @@ class BaseSVM(object):
 
     def predict(self, T):
         T = np.asanyarray(T, dtype=np.float, order='C')
+        if self.scale: T = (T - self.mean) / self.std
         return libsvm.predict_from_model_wrap(T, self.support_,
                       self.coef_, self.rho_, self.svm,
                       self.kernel, self.degree, self.gamma,

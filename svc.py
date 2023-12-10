@@ -11,21 +11,27 @@ class SVC(BaseSVM):
         nfeatures is the number of features.
     Y : array, shape = [nsamples]
         Target vector relative to X
-    impl : string, optional
+    Optional Parameters
+    -------------------
+    impl : string
         SVM implementation to choose from. This refers to different
         formulations of the SVM optimization problem.
         Can be one of 'c_svc', 'nu_svc'. By default 'c_svc' will be chosen.
-    nu: float, optional
+    scale : boolean
+        Scale data before fitting the model. Caution: if activated,
+        estimated parameters will also be scaled.
+        Default is True.
+    nu: float
         An upper bound on the fraction of training errors and a lower
         bound of the fraction of support vectors. Should be in the
         interval (0, 1].
         By default 0.5 will be taken.
         Only available is impl is set to 'nu_svc'
-    kernel : string, optional
+    kernel : string
          Specifies the kernel type to be used in the algorithm.
          one of 'linear', 'poly', 'rbf', 'sigmoid', 'precomputed'.
          If none is given 'rbf' will be used.
-    degree : int, optional
+    degree : int
         degree of kernel function
         is significant only in POLY, RBF, SIGMOID
     Members
@@ -47,16 +53,16 @@ class SVC(BaseSVM):
     <scikits.learn.svm.svm.SVM object at 0x...>
     >>> print clf.predict([[-0.8, -1]])
     [ 1.]
-    See also
-    --------
+    References
+    ----------
     http://scikit-learn.sourceforge.net/doc/modules/svm.html
     http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf
     """
     def __init__(self, impl='c_svc', kernel='rbf', degree=3,
                  gamma=0.0, coef0=0.0, cache_size=100.0, eps=1e-3,
                  C=1.0, nr_weight=0, nu=0.5, p=0.1, shrinking=1,
-                 probability=0):
+                 probability=0, scale=True):
 
         BaseSVM.__init__(self, impl, kernel, degree, gamma, coef0,
                          cache_size, eps, C, nr_weight, nu, p,
-                         shrinking, probability)
+                         shrinking, probability, scale) 
